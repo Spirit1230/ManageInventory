@@ -1,4 +1,5 @@
 import os
+import re
 import Item
 
 def AddItem(fileName) :
@@ -46,10 +47,10 @@ def SearchItem(fileName) :
 
     for item in inventoryFile :
         checkItem = Item.Item(item.split(","))
-        if (checkItem.name.lower() == itemToFind.lower()) :
+        if (re.search(itemToFind.lower(), checkItem.name.lower())) :
+            print()
             checkItem.PrintItem()
             foundItem = True
-            break
     
     inventoryFile.close()
 
