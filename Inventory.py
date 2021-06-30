@@ -17,11 +17,27 @@ def AddItem(fileName) :
     inventory.write(toWrite)
     inventory.close()
 
-def RemoveItem(fileName, barcode) :
+def RemoveItem(fileName) :
     pass
 
-def SearchItem(fileName, barcode) :
-    pass
+def SearchItem(fileName) :
+    itemToFind = str(input("Please input the name of what you want to find :"))
+
+    foundItem = False
+    inventoryFile = open(fileName, "r")
+
+    for item in inventoryFile :
+        checkItem = Item.Item(item.split(","))
+        if (checkItem.name.lower() == itemToFind.lower()) :
+            checkItem.PrintItem()
+            foundItem = True
+            break
+    
+    inventoryFile.close()
+
+    if (foundItem == False) :
+        print("Could not find " + itemToFind + " in inventory")
+
 
 def CreateNewInventory(fileName) :
     newInventory = open(fileName, "w")
@@ -53,7 +69,7 @@ if __name__ == "__main__" :
         optionPicked = str(input("Please pick an option : "))
 
         if (optionPicked == "1") :
-            pass
+            SearchItem(inventoryName)
         elif (optionPicked == "2") :
             AddItem(inventoryName)
         elif (optionPicked == "3") :
