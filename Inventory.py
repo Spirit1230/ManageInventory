@@ -18,10 +18,28 @@ def AddItem(fileName) :
     inventory.close()
 
 def RemoveItem(fileName) :
-    pass
+    itemToRemove = str(input("Please input the name of what you want to remove : "))
+
+    tempInventoryName = fileName + "(temp)"
+
+    inventoryFile = open(fileName, "r")
+    newInventoryFile = open(tempInventoryName, "w")
+
+    for item in inventoryFile :
+        checkItem = Item.Item(item.split(","))
+        if (checkItem.name.lower() != itemToRemove.lower()) :
+            newInventoryFile.write(item)
+
+    inventoryFile.close()
+    newInventoryFile.close()
+
+    os.remove(fileName)
+    os.rename(tempInventoryName, fileName)
+
+    print(itemToRemove + " removed")
 
 def SearchItem(fileName) :
-    itemToFind = str(input("Please input the name of what you want to find :"))
+    itemToFind = str(input("Please input the name of what you want to find : "))
 
     foundItem = False
     inventoryFile = open(fileName, "r")
@@ -73,7 +91,7 @@ if __name__ == "__main__" :
         elif (optionPicked == "2") :
             AddItem(inventoryName)
         elif (optionPicked == "3") :
-            pass
+            RemoveItem(inventoryName)
         elif (optionPicked == "4") :
             accessingInventory = False
         else :
