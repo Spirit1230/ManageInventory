@@ -10,13 +10,13 @@ class Item :
             print("Please input the items details")
             self.barcode = str(input("Barcode : "))
             self.name = str(input("Name : "))
-            self.price = str(input("Price : "))
+            self.price = str(input("Price/£ : "))
             self.numberInStock = "0"
         elif (len(itemDetails) == 4) :
-            self.barcode = itemDetails[0]
-            self.name = itemDetails[1]
-            self.price = itemDetails[2]
-            self.numberInStock = itemDetails[3]
+            self.barcode = itemDetails[0].strip()
+            self.name = itemDetails[1].strip()
+            self.price = itemDetails[2].strip()
+            self.numberInStock = itemDetails[3].strip()
 
     def PrintItem(self) :
         print(self.name)
