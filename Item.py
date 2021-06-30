@@ -3,20 +3,20 @@ class Item :
     barcode = ""
     name = ""
     price = ""
-    numberInStock = 0
+    numberInStock = "0"
 
-    def __init__(self) :
-        print("Please input the items details")
-        self.barcode = str(input("Barcode : "))
-        self.name = str(input("Name : "))
-        self.price = str(input("Price : "))
-        self.numberInStock = "0"
-
-    def __init__(self, _barcode, _name, _price, _numberInStock) :
-        self.barcode = _barcode
-        self.name = _name
-        self.price = _price
-        self.numberInStock = _numberInStock
+    def __init__(self, itemDetails = None) :
+        if (itemDetails == None) :
+            print("Please input the items details")
+            self.barcode = str(input("Barcode : "))
+            self.name = str(input("Name : "))
+            self.price = str(input("Price : "))
+            self.numberInStock = "0"
+        elif (len(itemDetails) == 4) :
+            self.barcode = itemDetails[0]
+            self.name = itemDetails[1]
+            self.price = itemDetails[2]
+            self.numberInStock = itemDetails[3]
 
     def PrintItem(self) :
         print(self.name)

@@ -2,7 +2,7 @@ import os
 import Item
 
 def AddItem(fileName) :
-    item = Item()
+    item = Item.Item()
     itemDetails = item.GetDetails()
 
     toWrite = ""
@@ -37,22 +37,6 @@ def DisplayOptions() :
     print("3. Remove an item")
     print("4. Exit")
     print("-------------------------------------")
-
-def GetItemDetails() :
-    itemDetails = []
-
-    print("Please input the items details")
-    itemDetails.append(str(input("Barcode : ")))
-    itemDetails.append(str(input("Name : ")))
-    itemDetails.append(str(input("Price : ")))
-    itemDetails.append("0")
-
-    return itemDetails
-
-def PrintItem(itemDetails) :
-    print(itemDetails[1])
-    print("Cost : £" + itemDetails[2])
-    print(itemDetails[3] + " in stock")
 
 if __name__ == "__main__" :
     inventoryName = "StoreInventory.csv"
