@@ -5,7 +5,6 @@ class Item :
     barcode = ""
     name = ""
     price = ""
-    numberInStock = "0"
 
     def __init__(self, itemDetails = None) :
         if (itemDetails == None) :
@@ -13,20 +12,17 @@ class Item :
             self.SetBarcode()
             self.SetName()
             self.SetPrice()
-            self.SetStock()
-        elif (len(itemDetails) == 4) :
+        elif (len(itemDetails) == 3) :
             self.barcode = itemDetails[0].strip()
             self.name = itemDetails[1].strip()
             self.price = itemDetails[2].strip()
-            self.numberInStock = itemDetails[3].strip()
 
     def PrintItem(self) :
         print(self.name)
         print("Cost : £" + self.price)
-        print(self.numberInStock + " in stock")
     
     def GetDetails(self) :
-        return [self.barcode, self.name, self.price, self.numberInStock]
+        return [self.barcode, self.name, self.price]
 
     def SetBarcode(self) :
         _barcode = str(input("Barcode : "))
@@ -50,14 +46,8 @@ class Item :
 
         self.price = _price
     
-    def SetStock(self) :
-        _numberInStock = str(input("Number in stock : "))
-
-        while (self.__IsStockValid(_numberInStock) == False) :
-            print("Invalid number of stock")
-            _numberInStock = str(input("Number in stock : "))
-
-        self.numberInStock = _numberInStock
+    def AdjustStock(self, numToAdjust) :
+        self.numberInStock = self.numberInStock + numToAdjust
 
     def __IsBarcodeValid(self, inputBarcode) :
         isValid = False
@@ -77,11 +67,4 @@ class Item :
 
         return isValid
     
-    def __IsStockValid(self, inputStock) :
-        isValid = False
-
-        if (re.match("^\d+$", inputStock)) :
-            if (int(inputStock) >= 0) :
-                isValid = True
-        
-        return isValid
+    
