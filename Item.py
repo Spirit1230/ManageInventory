@@ -45,9 +45,6 @@ class Item :
             _price = str(input("Price/£ : "))
 
         self.price = _price
-    
-    def AdjustStock(self, numToAdjust) :
-        self.numberInStock = self.numberInStock + numToAdjust
 
     def __IsBarcodeValid(self, inputBarcode) :
         isValid = False

@@ -20,6 +20,10 @@ if __name__ == "__main__" :
         elif (optionPicked == "3") :
             storeInventory.RemoveItem()
         elif (optionPicked == "4") :
+            storeInventory.AddStock()
+        elif (optionPicked == "5") :
+            storeInventory.RemoveStock()
+        elif (optionPicked == "6") :
             accessingInventory = False
         else :
             print("Invalid input")
