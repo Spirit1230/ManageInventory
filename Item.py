@@ -7,15 +7,13 @@ class Item :
     price = ""
     numberInStock = "0"
 
-    
-
     def __init__(self, itemDetails = None) :
         if (itemDetails == None) :
             print("Please input the items details")
-            self.barcode = self.__SetBarcode()
-            self.name = self.__SetName()
-            self.price = self.__SetPrice()
-            self.numberInStock = "0"
+            self.SetBarcode()
+            self.SetName()
+            self.SetPrice()
+            self.SetStock()
         elif (len(itemDetails) == 4) :
             self.barcode = itemDetails[0].strip()
             self.name = itemDetails[1].strip()
@@ -30,20 +28,44 @@ class Item :
     def GetDetails(self) :
         return [self.barcode, self.name, self.price, self.numberInStock]
 
-    def __SetBarcode(self) :
-        return str(input("Barcode : "))
+    def SetBarcode(self) :
+        _barcode = str(input("Barcode : "))
 
-    def __SetName(self) :
-        return str(input("Name : "))
+        while (self.__IsBarcodeValid(_barcode) == False) :
+            print("Invalid barcode")
+            _barcode = str(input("Barcode : "))
+        
+        self.barcode = _barcode
 
-    def __SetPrice(self) :
+    def SetName(self) :
+        _name = str(input("Name : "))
+        self.name = _name
+
+    def SetPrice(self) :
         _price = str(input("Price/£ : "))
 
         while (self.__IsPriceValid(_price) == False) :
             print("Invalid price")
             _price = str(input("Price/£ : "))
 
-        return _price
+        self.price = _price
+    
+    def SetStock(self) :
+        _numberInStock = str(input("Number in stock : "))
+
+        while (self.__IsStockValid(_numberInStock) == False) :
+            print("Invalid number of stock")
+            _numberInStock = str(input("Number in stock : "))
+
+        self.numberInStock = _numberInStock
+
+    def __IsBarcodeValid(self, inputBarcode) :
+        isValid = False
+
+        if (re.match("\d{10}", inputBarcode)) :
+            isValid = True
+
+        return isValid
 
     def __IsPriceValid(self, inputPrice) :
         isValid = False
@@ -53,4 +75,13 @@ class Item :
         if (re.match(priceRegEx, inputPrice)) :
             isValid = True
 
+        return isValid
+    
+    def __IsStockValid(self, inputStock) :
+        isValid = False
+
+        if (re.match("^\d+$", inputStock)) :
+            if (int(inputStock) >= 0) :
+                isValid = True
+        
         return isValid

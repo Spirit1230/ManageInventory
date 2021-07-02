@@ -23,15 +23,23 @@ class Inventory :
                 result.PrintItem()
 
     def AddItem(self) :
-        item = Item.Item()    
-        self.__AddToInventory(item.GetDetails())
+        newItem = Item.Item()
+
+        while (len(self.__SearchInventory(newItem.barcode)) != 0) :
+            print("Barcode is not unique, please input a unique barcode")
+            newItem.SetBarcode()
+
+        self.__AddToInventory(newItem.GetDetails())
 
     def RemoveItem(self) :
         itemToRemove = str(input("Please input the name of what you want to remove : "))
         self.__RemoveFromInventory(itemToRemove)
         print(itemToRemove + " removed")
 
-    def IncrementStock(self) :
+    def AddStock(self) :
+        pass
+
+    def RemoveStock(self) :
         pass
 
     def DisplayOptions(self) :
@@ -47,10 +55,16 @@ class Inventory :
         inventoryFile = open(self.inventoryFileName, "r")
         matchingItems = []
 
-        for item in inventoryFile :
-            checkItem = Item.Item(item.split(","))
-            if (re.search(toFind.lower(), checkItem.name.lower())) :
-                matchingItems.append(checkItem)
+        if (re.match("\d+", toFind)) :
+            for item in inventoryFile :
+                checkItem = Item.Item(item.split(","))
+                if (toFind == checkItem.barcode) :
+                    matchingItems.append(checkItem)
+        else :
+            for item in inventoryFile :
+                checkItem = Item.Item(item.split(","))
+                if (re.search(toFind.lower(), checkItem.name.lower())) :
+                    matchingItems.append(checkItem)
         
         inventoryFile.close()
 
@@ -85,6 +99,10 @@ class Inventory :
 
         os.remove(self.inventoryFileName)
         os.rename(tempInventoryName, self.inventoryFileName)
+
+    def __AlterNumInStock(self, barcode, numToAdjust) :
+        itemToAdjust = self.__SearchInventory(barcode)
+        pass
 
     def __CreateNewInventory(self) :
         newInventory = open(self.inventoryFileName, "w")
