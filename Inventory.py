@@ -2,98 +2,92 @@ import os
 import re
 import Item
 
-def AddItem(fileName) :
-    item = Item.Item()
-    itemDetails = item.GetDetails()
+class Inventory :
 
-    toWrite = ""
+    inventoryFileName = ""
 
-    for item in itemDetails :
-        toWrite = toWrite + item + ","
+    def __init__(self, _inventoryFileName) :
+        if (os.path.isfile(_inventoryFileName) == False) :
+            self.__CreateNewInventory(_inventoryFileName)
+        self.inventoryFileName = _inventoryFileName
 
-    toWrite = toWrite.strip(",")
-    toWrite = toWrite + "\n"
+    def SearchItem(self) :
+        itemToFind = str(input("Please input the name of what you want to find : "))
+        searchResults = self.__SearchInventory(itemToFind)    
 
-    inventory = open(fileName, "a")
-    inventory.write(toWrite)
-    inventory.close()
-
-def RemoveItem(fileName) :
-    itemToRemove = str(input("Please input the name of what you want to remove : "))
-
-    tempInventoryName = fileName + "(temp)"
-
-    inventoryFile = open(fileName, "r")
-    newInventoryFile = open(tempInventoryName, "w")
-
-    for item in inventoryFile :
-        checkItem = Item.Item(item.split(","))
-        if (checkItem.name.lower() != itemToRemove.lower()) :
-            newInventoryFile.write(item)
-
-    inventoryFile.close()
-    newInventoryFile.close()
-
-    os.remove(fileName)
-    os.rename(tempInventoryName, fileName)
-
-    print(itemToRemove + " removed")
-
-def SearchItem(fileName) :
-    itemToFind = str(input("Please input the name of what you want to find : "))
-
-    foundItem = False
-    inventoryFile = open(fileName, "r")
-
-    for item in inventoryFile :
-        checkItem = Item.Item(item.split(","))
-        if (re.search(itemToFind.lower(), checkItem.name.lower())) :
-            print()
-            checkItem.PrintItem()
-            foundItem = True
-    
-    inventoryFile.close()
-
-    if (foundItem == False) :
-        print("Could not find " + itemToFind + " in inventory")
-
-
-def CreateNewInventory(fileName) :
-    newInventory = open(fileName, "w")
-    newInventory.write("Barcode,Name,Price,NumInStock\n")
-    newInventory.close()
-    pass
-
-def DisplayOptions() :
-    print("-------------------------------------")
-    print("Hello what do you want to do today?\n")
-    print("1. Search for an item")
-    print("2. Add an item")
-    print("3. Remove an item")
-    print("4. Exit")
-    print("-------------------------------------")
-
-if __name__ == "__main__" :
-    inventoryName = "StoreInventory.csv"
-
-    if (os.path.isfile(inventoryName) != True) :
-        CreateNewInventory(inventoryName)
-    else :
-        print("Inventory already exists")
-
-    accessingInventory = True
-
-    while accessingInventory :
-        DisplayOptions()
-        optionPicked = str(input("Please pick an option : "))
-
-        if (optionPicked == "1") :
-            SearchItem(inventoryName)
-        elif (optionPicked == "2") :
-            AddItem(inventoryName)
-        elif (optionPicked == "3") :
-            RemoveItem(inventoryName)
-        elif (optionPicked == "4") :
-            accessingInventory = False
+        if (len(searchResults) == 0) :
+            print("Could not find " + itemToFind + " in inventory")
         else :
-            print("Invalid input")
+            for result in searchResults :
+                print()
+                result.PrintItem()
+
+    def AddItem(self) :
+        item = Item.Item()    
+        self.__AddToInventory(item.GetDetails())
+
+    def RemoveItem(self) :
+        itemToRemove = str(input("Please input the name of what you want to remove : "))
+        self.__RemoveFromInventory(itemToRemove)
+        print(itemToRemove + " removed")
+
+    def IncrementStock(self) :
+        pass
+
+    def DisplayOptions(self) :
+        print("-------------------------------------")
+        print("Hello what do you want to do today?\n")
+        print("1. Search for an item")
+        print("2. Add an item")
+        print("3. Remove an item")
+        print("4. Exit")
+        print("-------------------------------------")
+
+    def __SearchInventory(self, toFind) :
+        inventoryFile = open(self.inventoryFileName, "r")
+        matchingItems = []
+
+        for item in inventoryFile :
+            checkItem = Item.Item(item.split(","))
+            if (re.search(toFind.lower(), checkItem.name.lower())) :
+                matchingItems.append(checkItem)
+        
+        inventoryFile.close()
+
+        return matchingItems
+
+    def __AddToInventory(self, itemToAdd) :
+        toWrite = ""
+
+        for item in itemToAdd :
+            toWrite = toWrite + item + ","
+
+        toWrite = toWrite.strip(",")
+        toWrite = toWrite + "\n"
+
+        inventory = open(self.inventoryFileName, "a")
+        inventory.write(toWrite)
+        inventory.close()
+
+    def __RemoveFromInventory(self, itemToRemove) :
+        tempInventoryName = self.inventoryFileName + "(temp)"
+
+        inventoryFile = open(self.inventoryFileName, "r")
+        newInventoryFile = open(tempInventoryName, "w")
+
+        for item in inventoryFile :
+            checkItem = Item.Item(item.split(","))
+            if (checkItem.name.lower() != itemToRemove.lower()) :
+                newInventoryFile.write(item)
+
+        inventoryFile.close()
+        newInventoryFile.close()
+
+        os.remove(self.inventoryFileName)
+        os.rename(tempInventoryName, self.inventoryFileName)
+
+    def __CreateNewInventory(self) :
+        newInventory = open(self.inventoryFileName, "w")
+        newInventory.write("Barcode,Name,Price,NumInStock\n")
+        newInventory.close()
+        pass
