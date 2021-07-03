@@ -31,7 +31,7 @@ class Inventory :
             for result in searchResults :
                 print()
                 result.PrintItem()
-                print(self.__GetStock(result.barcode) + " in stock")
+                print(self.GetStock(result.barcode) + " in stock")
 
     def AddItem(self) :
         #adds a new item to the inventory and stock files
@@ -104,6 +104,20 @@ class Inventory :
 
         #alters the specified items stock
         self.__AlterNumInStock(barcode, -int(numToRemove))
+    
+    def GetStock(self, barcode) :
+        #gets the stock of a specified item
+        stockInventory = open(self.stockFileName, "r")
+        numInStock = "0"
+
+        #cycles through stock file until the specified barcode is reached
+        for item in stockInventory :
+            itemDetails = self.__FormatFromFile(item)
+            if (itemDetails[0] == barcode) :
+                numInStock = itemDetails[1]
+                break
+        
+        return numInStock
 
     def DisplayOptions(self) :
         #displays all the options for interacting with the inventory class
@@ -263,20 +277,6 @@ class Inventory :
             numberInStock = str(input("Number in stock : "))
 
         return numberInStock
-
-    def __GetStock(self, barcode) :
-        #gets the stock of a specified item
-        stockInventory = open(self.stockFileName, "r")
-        numInStock = "0"
-
-        #cycles through stock file until the specified barcode is reached
-        for item in stockInventory :
-            itemDetails = self.__FormatFromFile(item)
-            if (itemDetails[0] == barcode) :
-                numInStock = itemDetails[1]
-                break
-        
-        return numInStock
 
     def __IsStockValid(self, inputStock) :
         #checks input stock is valid
