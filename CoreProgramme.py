@@ -1,7 +1,5 @@
 import Inventory
 
-import Inventory
-
 if __name__ == "__main__" :
 
     #creates instance of Inventory() class
