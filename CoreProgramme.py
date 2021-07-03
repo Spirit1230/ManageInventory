@@ -3,12 +3,14 @@ import Inventory
 import Inventory
 
 if __name__ == "__main__" :
-    inventoryName = "StoreInventory.csv"
 
+    #creates instance of Inventory() class
+    inventoryName = "StoreInventory.csv"
     storeInventory = Inventory.Inventory(inventoryName)
 
     accessingInventory = True
 
+    #interface for interacting with the Inventory() class
     while accessingInventory :
         storeInventory.DisplayOptions()
         optionPicked = str(input("Please pick an option : "))
