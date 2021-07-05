@@ -22,6 +22,7 @@ class Item :
 
     def PrintItem(self) :
         #display the name and price of the item
+        print(self.barcode)
         print(self.name)
         print("Cost : £" + self.price)
     
