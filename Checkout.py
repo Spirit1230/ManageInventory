@@ -31,6 +31,7 @@ class Checkout :
     def TakePayment(self) :
         payment = str(input("Total cost is " + "{:.2f}".format(self.currentTotalPrice) + "\nPlease input payment : "))
 
+        #continues to ask for payment until alid payment is given
         while (self.__ValidPayment(payment) == False) :
             print("Payment in valid")
             payment = str(input("Please input payment : "))
@@ -40,6 +41,7 @@ class Checkout :
         if (wantReceipt.lower() == "y") :
             self.__PrintReceipt(payment)
 
+        #removes bought items from the stock inventory
         for item in self.shoppingList :
             itemBarcode = item[0]
             self.storeInventory.RemoveStock(itemBarcode, 1)
@@ -55,10 +57,11 @@ class Checkout :
         print()
         print("Total".ljust(30) + "{:.2f}".format(self.currentTotalPrice))  #formats price to 2dp
         print("Amount Payed".ljust(30) + amountPayed)
-        print("Change".ljust(30) + "{:.2f}".format(float(amountPayed) - self.currentTotalPrice))
+        print("Change".ljust(30) + "{:.2f}".format(float(amountPayed) - self.currentTotalPrice))    #calculates and diplays change to 2dp
         print()
 
     def __ValidPayment(self, payment) :
+        #checks the payment given is valid
         validPayment = False
 
         if (re.match("^\d+.\d\d$", payment)) :
