@@ -118,6 +118,20 @@ class Inventory :
                 break
         
         return numInStock
+    
+    def GetItem(self, barcode) :
+        #gets the specified item
+        itemInventory = open(self.inventoryFileName, "r")
+        itemToGet = []
+
+        #cycles through inventory until specified barcode is reached
+        for item in itemInventory :
+            itemDetails = self.__FormatFromFile(item)
+            if (itemDetails[0] == barcode) :
+                itemToGet = itemDetails
+                break
+        
+        return itemToGet
 
     def DisplayOptions(self) :
         #displays all the options for interacting with the inventory class
