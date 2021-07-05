@@ -38,6 +38,6 @@ if __name__ == "__main__" :
 
         for num in range(0, 5) :
             checkout.ScanItem()
-        checkout.PrintReceipt()
+        checkout.TakePayment()
     else :
         print("Invalid input")
