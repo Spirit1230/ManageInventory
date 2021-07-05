@@ -71,14 +71,20 @@ class Inventory :
         self.__RemoveFromInventory(barcodeToRemove)
         print(itemToRemove + " removed")
 
-    def AddStock(self) :
+    def AddStock(self, barcode = None, numToAdd = None) :
         #adds stock to a specified item
 
         #gets the items barcode from the user
-        barcode = str(input("Please enter the barcode of the item to adjust : "))
+        if (barcode == None) :
+            barcode = str(input("Please enter the barcode of the item to adjust : "))
+        else :
+            barcode = str(barcode)
 
         #gets the amount of stock to add from the user
-        numToAdd = str(input("Please enter the number of stock to add : "))
+        if (numToAdd == None) :
+            numToAdd = str(input("Please enter the number of stock to add : "))
+        else :
+            numToAdd = str(numToAdd)
 
         #keeps asking for the amount of stock until a valid input
         while (self.__IsStockValid(numToAdd) == False) :
@@ -88,14 +94,20 @@ class Inventory :
         #adjusts the specified items stock
         self.__AlterNumInStock(barcode, int(numToAdd))
 
-    def RemoveStock(self) :
+    def RemoveStock(self, barcode = None, numToRemove = None) :
         #removes stock from a specified item
 
         #acquires barcode from user
-        barcode = str(input("Please enter the barcode of the item to adjust : "))
+        if (barcode == None) :
+            barcode = str(input("Please enter the barcode of the item to adjust : "))
+        else :
+            barcode = str(barcode)
 
         #acquires amount of stock to remove from user
-        numToRemove = str(input("Please enter the number of stock to add : "))
+        if (numToRemove == None) :
+            numToRemove = str(input("Please enter the number of stock to add : "))
+        else :
+            numToRemove = str(numToRemove)
 
         #keeps asking until a valid input
         while (self.__IsStockValid(numToRemove) == False) :
@@ -105,7 +117,14 @@ class Inventory :
         #alters the specified items stock
         self.__AlterNumInStock(barcode, -int(numToRemove))
     
-    def GetStock(self, barcode) :
+    def GetStock(self, barcode = None) :
+
+        #gets barcode from user
+        if (barcode == None) :
+            barcode = str(input("Please enter the barcode for the item you want : "))
+        else :
+            barcode = str(barcode)
+
         #gets the stock of a specified item
         stockInventory = open(self.stockFileName, "r")
         numInStock = "0"
@@ -119,7 +138,14 @@ class Inventory :
         
         return numInStock
     
-    def GetItem(self, barcode) :
+    def GetItem(self, barcode = None) :
+
+        #gets barcode from user
+        if (barcode == None) :
+            barcode = str(input("Please enter the barcode for the item you want : "))
+        else :
+            barcode = str(barcode)
+
         #gets the specified item
         itemInventory = open(self.inventoryFileName, "r")
         itemToGet = []
@@ -150,6 +176,8 @@ class Inventory :
 
         inventoryFile = open(self.inventoryFileName, "r")
         matchingItems = []
+
+        toFind = str(toFind)
 
         if (re.match("\d+", toFind)) :
             #if toFind is a barcode
@@ -205,6 +233,8 @@ class Inventory :
         inventoryFile = open(self.inventoryFileName, "r")
         newInventoryFile = open(tempInventoryName, "w")
 
+        barcodeToRemove = str(barcodeToRemove)
+
         #cycles through moving all entries from the old file to the new one bar the entry to remove
         for item in inventoryFile :
             checkItem = Item.Item(self.__FormatFromFile(item))
@@ -239,6 +269,8 @@ class Inventory :
 
     def __AlterNumInStock(self, barcode, numToAdjust) :
         #adjust the amount of stock an item has
+
+        barcode = str(barcode)
 
         #creates a new stock file with a temporary name
         tempStockInventory = "(temp)" + self.stockFileName
