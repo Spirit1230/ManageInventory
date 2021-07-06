@@ -6,11 +6,13 @@ class Inventory :
 
     inventoryFileName = ""
     stockFileName = ""
+    locationFileName = ""
 
     def __init__(self, _inventoryFileName) :
         #class constructor
         self.inventoryFileName = _inventoryFileName
         self.stockFileName = "Stock" + _inventoryFileName
+        self.locationFileName = "Location" + _inventoryFileName
         if (os.path.isfile(_inventoryFileName) == False) :
             #creates two new files if the appropriate files are missing
             self.__CreateNewInventory()
@@ -32,6 +34,7 @@ class Inventory :
                 print()
                 result.PrintItem()
                 print(self.GetStock(result.barcode) + " in stock")
+                print("Located at " + self.GetLocation(result.barcode))
 
     def AddItem(self) :
         #adds a new item to the inventory and stock files
@@ -47,8 +50,11 @@ class Inventory :
         #acquires the amount of stock available
         numInStock = self.__SetStock()
 
+        #acquires where the item can be found in the store
+        location = str(input("Please enter where the item is located in store : "))
+
         #adds new item to files
-        self.__AddToInventory(newItem.GetDetails(), numInStock)
+        self.__AddToInventory(newItem.GetDetails(), numInStock, location)
 
     def RemoveItem(self) :
         #removes an item from the inventory and stock files
@@ -67,8 +73,10 @@ class Inventory :
         #acquires the barcode for the item to remove
         barcodeToRemove = str(input("Please input the barcode of the item you wish to remove : "))
 
-        #removes the item from both files
-        self.__RemoveFromInventory(barcodeToRemove)
+        #removes the item from all files
+        self.__RemoveItemFromFile(barcodeToRemove, self.inventoryFileName)
+        self.__RemoveItemFromFile(barcodeToRemove, self.stockFileName)
+        self.__RemoveItemFromFile(barcodeToRemove, self.locationFileName)
         print(itemToRemove + " removed")
 
     def AddStock(self, barcode = None, numToAdd = None) :
@@ -116,27 +124,28 @@ class Inventory :
 
         #alters the specified items stock
         self.__AlterNumInStock(barcode, -int(numToRemove))
-    
-    def GetStock(self, barcode = None) :
 
-        #gets barcode from user
+    def ChangeLocation(self, barcode = None, newLoaction = None) :
+        #Changes the location an item can be found in
+
+        #Gets input from the user if no barcode has been specified
         if (barcode == None) :
-            barcode = str(input("Please enter the barcode for the item you want : "))
+            barcode = str(input("Please enter the barcode of the item to adjust :"))
         else :
             barcode = str(barcode)
 
-        #gets the stock of a specified item
-        stockInventory = open(self.stockFileName, "r")
-        numInStock = "0"
+        #Gets a new location from the user if no location is specified
+        if (newLoaction == None) :
+            newLoaction = str(input("Please enter the items new location : "))
+        else :
+            newLoaction = str(newLoaction)
 
-        #cycles through stock file until the specified barcode is reached
-        for item in stockInventory :
-            itemDetails = self.__FormatFromFile(item)
-            if (itemDetails[0] == barcode) :
-                numInStock = itemDetails[1]
-                break
-        
-        return numInStock
+        #removes the old entry and replaces it with the updated one
+        self.__RemoveItemFromFile(barcode, self.locationFileName)
+
+        locationFile = open(self.locationFileName, "a")
+        locationFile.write(barcode + "," + newLoaction + "\n")
+        locationFile.close()
     
     def GetItem(self, barcode = None) :
 
@@ -158,6 +167,46 @@ class Inventory :
                 break
         
         return itemToGet
+
+    def GetStock(self, barcode = None) :
+        #gets barcode from user
+        if (barcode == None) :
+            barcode = str(input("Please enter the barcode for the item you want : "))
+        else :
+            barcode = str(barcode)
+
+        #gets the stock of a specified item
+        stockInventory = open(self.stockFileName, "r")
+        numInStock = "0"
+
+        #cycles through stock file until the specified barcode is reached
+        for item in stockInventory :
+            itemDetails = self.__FormatFromFile(item)
+            if (itemDetails[0] == barcode) :
+                numInStock = itemDetails[1]
+                break
+        
+        return numInStock
+
+    def GetLocation(self, barcode = None) :
+        #gets barcode from user
+        if (barcode == None) :
+            barcode = str(input("Please enter the barcode for the item you want : "))
+        else :
+            barcode = str(barcode)
+
+        #gets the location of the specified item
+        locationInventory = open(self.locationFileName, "r")
+        location = "Item not found"
+
+        #cycles through location file until the specified barcode is reached
+        for item in locationInventory :
+            itemDetails = self.__FormatFromFile(item)
+            if (itemDetails[0] == barcode) :
+                location = itemDetails[1]
+                break
+        
+        return location
 
     def DisplayOptions(self) :
         #displays all the options for interacting with the inventory class
@@ -201,7 +250,7 @@ class Inventory :
         #returns the list of Item()
         return matchingItems
 
-    def __AddToInventory(self, itemToAdd, stockToAdd) :
+    def __AddToInventory(self, itemToAdd, stockToAdd, locatedAt) :
         #adds an item and its stock to the appropriate files
 
         #compiles the item details to add to the inventory file
@@ -224,48 +273,34 @@ class Inventory :
         stockInventory.write(itemToAdd[0] + "," + stockToAdd + "\n")
         stockInventory.close()
 
-    def __RemoveFromInventory(self, barcodeToRemove) :
-        #removes an item from the inventory and stock files
+        #appends location to location file
+        stockInventory = open(self.locationFileName, "a")
+        stockInventory.write(itemToAdd[0] + "," + locatedAt + "\n")
+        stockInventory.close()
 
-        #creates new inventory file with a temporary name
-        tempInventoryName = "(temp)" + self.inventoryFileName
+    def __RemoveItemFromFile(self, barcodeToRemove, fileName) :
+        #removes an item from the specified file
 
-        inventoryFile = open(self.inventoryFileName, "r")
-        newInventoryFile = open(tempInventoryName, "w")
+        #creates a new temporary name
+        tempFileName = "(temp)" + fileName
+
+        oldFile = open(fileName, "r")
+        newFile = open(tempFileName, "w")
 
         barcodeToRemove = str(barcodeToRemove)
 
         #cycles through moving all entries from the old file to the new one bar the entry to remove
-        for item in inventoryFile :
+        for item in oldFile :
             checkItem = Item.Item(self.__FormatFromFile(item))
             if (checkItem.barcode != barcodeToRemove) :
-                newInventoryFile.write(item)
+                newFile.write(item)
 
-        inventoryFile.close()
-        newInventoryFile.close()
-
-        #removes the old file and renames the new one to the original file name
-        os.remove(self.inventoryFileName)
-        os.rename(tempInventoryName, self.inventoryFileName)
-
-        #creates a new stock file with a temporary name
-        tempStockName = "(temp)" + self.stockFileName
-
-        stockFile = open(self.stockFileName, "r")
-        newStockFile = open(tempStockName, "w")
-
-        #cycles through moving all entries from the old file to the new one bar the entry to remove
-        for item in stockFile :
-            itemDetails = self.__FormatFromFile(item)
-            if (barcodeToRemove != itemDetails[0]) :
-                newStockFile.write(item)
-
-        stockFile.close()
-        newStockFile.close()
+        oldFile.close()
+        newFile.close()
 
         #removes the old file and renames the new one to the original file name
-        os.remove(self.stockFileName)
-        os.rename(tempStockName, self.stockFileName)
+        os.remove(fileName)
+        os.rename(tempFileName, fileName)
 
     def __AlterNumInStock(self, barcode, numToAdjust) :
         #adjust the amount of stock an item has
@@ -311,7 +346,12 @@ class Inventory :
         newStock = open(self.stockFileName, "w")
         newStock.write("Barcode,NumInStock\n")
         newStock.close()
-        pass
+
+        #creates a new location file with header
+        newStock = open(self.locationFileName, "w")
+        newStock.write("Barcode,Location\n")
+        newStock.close()
+        
 
     def __SetStock(self) :
         #gets input from the user for the items stock
