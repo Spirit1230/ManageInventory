@@ -1,9 +1,10 @@
 import Checkout
 import Inventory
+import StockCheckerApp
 
 if __name__ == "__main__" :
 
-    print("Do you want to test :\n1. Inventory Controls\n2. Checkout")
+    print("Do you want to test :\n1. Inventory Controls\n2. Checkout\n3. Stock Checker App")
     choice = str(input())
 
     inventoryName = "StoreInventory.csv"
@@ -36,8 +37,22 @@ if __name__ == "__main__" :
     elif (choice == "2") :
         checkout = Checkout.Checkout(inventoryName)
 
-        for num in range(0, 5) :
+        scanNextItem = True
+        while scanNextItem :
             checkout.ScanItem()
+            continueScanning = str(input("Do you want to scan another item? (y/n) : "))
+            if (continueScanning.lower() != "y") :
+                scanNextItem = False
+                
         checkout.TakePayment()
+    elif (choice == "3") :
+        stockChecker = StockCheckerApp.StockChecker(inventoryName)
+        usingApp = True
+
+        while usingApp :
+            stockChecker.FindItem()
+            findAnotherItem = str(input("Do you want to find another item? (y/n) : "))
+            if (findAnotherItem.lower() != "y") :
+                usingApp = False
     else :
         print("Invalid input")
